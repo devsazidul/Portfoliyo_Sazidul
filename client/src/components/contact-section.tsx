@@ -8,8 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Mail, MapPin, Phone, Send, Loader2, Github, Linkedin, Twitter } from "lucide-react";
-import { SiDribbble } from "react-icons/si";
+import { Mail, MapPin, Phone, Send, Loader2, Github, Linkedin, Twitter, Facebook } from "lucide-react";
+import { SiCodeforces, SiDribbble, SiHackerrank, SiLeetcode } from "react-icons/si";
 import { insertContactMessageSchema, type InsertContactMessage } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -18,28 +18,30 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "alex@example.com",
-    href: "mailto:alex@example.com",
+    value: "rabbiking00@gmail.com",
+    href: "mailto:rabbiking00@gmail.com",
   },
   {
     icon: MapPin,
     label: "Location",
-    value: "San Francisco, CA",
+    value: "Gulsan-1, Dhaka, Bangladesh,",
     href: "#",
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "+1 (555) 123-4567",
-    href: "tel:+15551234567",
+    value: "+8801999076918",
+    href: "tel:+8801999076918",
   },
 ];
 
 const socialLinks = [
-  { icon: Github, label: "GitHub", href: "https://github.com" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com" },
-  { icon: Twitter, label: "Twitter", href: "https://twitter.com" },
-  { icon: SiDribbble, label: "Dribbble", href: "https://dribbble.com" },
+  { icon: Github, label: "GitHub", href: "https://github.com/devsazidul" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/md-sazidul-islam-374541212/" },
+  { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/sazidulislamrabbi" },
+  { icon: SiCodeforces, label: "CodeForce", href: "https://codeforces.com/profile/sazidulislam?csrf_token=9ae236420418bd6cd738b466e0276d6c" },
+  { icon: SiLeetcode, label: "LeetCode", href: "https://leetcode.com/u/sazidulislam/" },
+  { icon: SiHackerrank, label: "Hackerrank", href: "https://www.hackerrank.com/profile/sazidulislam" },
 ];
 
 export function ContactSection() {

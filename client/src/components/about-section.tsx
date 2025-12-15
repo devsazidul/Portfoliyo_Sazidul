@@ -5,26 +5,26 @@ import { User, Code2, FileText, Users } from "lucide-react";
 import type { PersonalInfo } from "@shared/schema";
 
 const personalInfo: PersonalInfo = {
-  name: "Alex Developer",
-  title: "Full-Stack Developer & Designer",
-  bio: "I'm a passionate developer with expertise in building modern web applications. I love creating beautiful, functional, and user-friendly interfaces that make a difference. With years of experience in both frontend and backend development, I bring ideas to life through clean code and thoughtful design.",
-  email: "alex@example.com",
+  name: "Md.Sazidul islam",
+  title: "Full-Stack Mobile Application Developer (Flutter)",
+  bio: "I'm a passionate developer with expertise in building Mobile application. I love creating beautiful, functional, and user-friendly interfaces that make a difference. With 2 years of experience in both Flutter and backend development with Api intregration, I bring ideas to life through clean code and thoughtful design with responsive.",
+  email: "rabbiking00@gmail.com",
   location: "San Francisco, CA",
-  phone: "+1 (555) 123-4567",
+  phone: "+88 01999076918",
   skills: [
-    "React", "TypeScript", "Node.js", "Python", "PostgreSQL",
-    "Tailwind CSS", "Next.js", "GraphQL", "AWS", "Docker",
-    "Figma", "UI/UX Design"
+    "Flutter", "Django", "FirstAPI", "Python", "MySQL",
+    "MongoDB", "C", "C++", "AWS", "Dart",
+    "Figma", "Firebase","Getx","Bloc","Git & Github","AppStore","PlayStore","OOP","C#","Vs Code", "XCode"
   ],
   stats: {
-    yearsExperience: 8,
+    yearsExperience: 3,
     projectsCompleted: 50,
     documentsShared: 100,
     happyClients: 30,
   },
   social: {
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
+    github: "https://github.com/devsazidul",
+    linkedin: "https://www.linkedin.com/in/md-sazidul-islam-374541212/",
     twitter: "https://twitter.com",
     dribbble: "https://dribbble.com",
   },
@@ -154,19 +154,28 @@ export function AboutSection() {
               isVisible ? "opacity-100 animate-fade-in-left" : "opacity-0"
             }`}
           >
-            <div className="relative">
+            <div className="relative"> 
+              {/* =-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= Image section */}
+
               <div className="w-full aspect-square max-w-md mx-auto rounded-2xl overflow-hidden gradient-border">
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center">
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                    <User className="w-16 h-16 text-white" />
-                  </div>
-                </div>
-              </div>
+  <div className="w-full h-full bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 flex items-center justify-center">
+    <div className="rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+      {/* Image from the public folder */}
+      <img
+        src="/me.jpg"
+        alt="User"
+        className="object-cover"
+      />
+    </div>
+  </div>
+</div>
+
+
+              {/* =-=-====--=-= */}
               <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-accent opacity-50 blur-2xl animate-pulse-glow" />
               <div className="absolute -top-4 -left-4 w-32 h-32 rounded-full bg-gradient-to-br from-primary to-secondary opacity-50 blur-2xl animate-pulse-glow animation-delay-500" />
-            </div>
+            </div> 
           </div>
-
           <div
             className={`${
               isVisible ? "opacity-100 animate-fade-in-right" : "opacity-0"
@@ -181,6 +190,8 @@ export function AboutSection() {
             <p className="text-muted-foreground leading-relaxed mb-8" data-testid="text-about-bio">
               {personalInfo.bio}
             </p>
+
+
 
             <div className="mb-8">
               <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
@@ -210,7 +221,7 @@ export function AboutSection() {
             icon={<Code2 className="w-6 h-6 text-primary" />}
             value={personalInfo.stats.yearsExperience}
             label="Years Experience"
-            delay={0}
+            delay={100}
           />
           <StatCard
             icon={<FileText className="w-6 h-6 text-secondary" />}
