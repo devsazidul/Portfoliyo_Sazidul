@@ -14,6 +14,48 @@ import { insertContactMessageSchema, type InsertContactMessage } from "@shared/s
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
+// import nodemailer from 'nodemailer';
+
+// // Email transporter configure koro
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail', // ba onno email service
+//   auth: {
+//     user: 'sazidulislamrabbi@gmail.com', // Tumhar Gmail
+//     pass: 'aybr jjzo hhey gwoy', // Gmail App Password
+//   },
+// });
+
+// // Contact API endpoint
+// app.post('/api/contact', async (req, res) => {
+//   try {
+//     const { name, email, subject, message } = req.body;
+
+//     // Email options
+//     const mailOptions = {
+//       from: email, // Sender email
+//       to: 'sazidulislamrabbi@gmail.com', // Tumhar email jate message jabe
+//       subject: `Contact Form: ${subject}`,
+//       html: `
+//         <h3>New Contact Form Message</h3>
+//         <p><strong>Name:</strong> ${name}</p>
+//         <p><strong>Email:</strong> ${email}</p>
+//         <p><strong>Subject:</strong> ${subject}</p>
+//         <p><strong>Message:</strong></p>
+//         <p>${message}</p>
+//       `,
+//     };
+
+//     // Email send koro
+//     await transporter.sendMail(mailOptions);
+
+//     res.status(200).json({ success: true, message: 'Email sent successfully' });
+//   } catch (error) {
+//     console.error('Email sending error:', error);
+//     res.status(500).json({ success: false, message: 'Failed to send email' });
+//   }
+// });
+
+
 const contactInfo = [
   {
     icon: Mail,
