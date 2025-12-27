@@ -197,6 +197,7 @@ export function DocumentsSection() {
             }`}
             data-testid="text-documents-title"
           >
+            {/* Section title text */}
             My <span className="gradient-text-vibrant">Documents</span>
           </h2>
           <p
@@ -213,6 +214,7 @@ export function DocumentsSection() {
             isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
           }`}
         >
+        {/* Search funtinality */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
