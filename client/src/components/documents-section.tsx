@@ -25,6 +25,7 @@ const typeColors: Record<string, string> = {
   XLS: "from-emerald-500 to-emerald-600",
   IMG: "from-purple-500 to-purple-600",
 };
+// asdfa
 
 interface DocumentCardProps {
   document: Document;
