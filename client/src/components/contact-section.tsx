@@ -8,52 +8,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Mail, MapPin, Phone, Send, Loader2, Github, Linkedin, Twitter, Facebook } from "lucide-react";
+import { Mail, MapPin, Phone, Send, Loader2, Github, Linkedin, Twitter, Facebook, CheckCircle } from "lucide-react";
 import { SiCodeforces, SiDribbble, SiHackerrank, SiLeetcode } from "react-icons/si";
 import { insertContactMessageSchema, type InsertContactMessage } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-
-// import nodemailer from 'nodemailer';
-
-// // Email transporter configure koro
-// const transporter = nodemailer.createTransport({
-//   service: 'gmail', // ba onno email service
-//   auth: {
-//     user: 'sazidulislamrabbi@gmail.com', // Tumhar Gmail
-//     pass: 'aybr jjzo hhey gwoy', // Gmail App Password
-//   },
-// });
-
-// // Contact API endpoint
-// app.post('/api/contact', async (req, res) => {
-//   try {
-//     const { name, email, subject, message } = req.body;
-
-//     // Email options
-//     const mailOptions = {
-//       from: email, // Sender email
-//       to: 'sazidulislamrabbi@gmail.com', // Tumhar email jate message jabe
-//       subject: `Contact Form: ${subject}`,
-//       html: `
-//         <h3>New Contact Form Message</h3>
-//         <p><strong>Name:</strong> ${name}</p>
-//         <p><strong>Email:</strong> ${email}</p>
-//         <p><strong>Subject:</strong> ${subject}</p>
-//         <p><strong>Message:</strong></p>
-//         <p>${message}</p>
-//       `,
-//     };
-
-//     // Email send koro
-//     await transporter.sendMail(mailOptions);
-
-//     res.status(200).json({ success: true, message: 'Email sent successfully' });
-//   } catch (error) {
-//     console.error('Email sending error:', error);
-//     res.status(500).json({ success: false, message: 'Failed to send email' });
-//   }
-// });
 
 
 const contactInfo = [
@@ -103,20 +62,31 @@ export function ContactSection() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: InsertContactMessage) => {
-      const response = await apiRequest("POST", "/api/contact", data);
+      const response = await apiRequest("POST", "/api/contact/", data);
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Message sent!",
-        description: "Thank you for reaching out. I'll get back to you soon.",
+        title: (
+          <div className="flex items-center gap-2 text-white">
+            <CheckCircle className="h-5 w-5" />
+            <span className="font-bold text-lg">Success!</span>
+          </div>
+        ),
+        description: (
+          <div className="text-white/90">
+            Your message has been sent securely. checks your email for confirmation!
+          </div>
+        ),
+        variant: "success",
+        className: "border-green-500 bg-green-600 text-white", // Extra colorful override
       });
       form.reset();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Error Sending Message",
+        description: "Could not send the message. Please try again later.",
         variant: "destructive",
       });
     },
@@ -158,17 +128,15 @@ export function ContactSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2
-            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${
-              isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
-            }`}
+            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
+              }`}
             data-testid="text-contact-title"
           >
             Get In <span className="gradient-text-vibrant">Touch</span>
           </h2>
           <p
-            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${
-              isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
-            }`}
+            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
+              }`}
           >
             Have a project in mind? Let's work together!
           </p>
@@ -176,9 +144,8 @@ export function ContactSection() {
 
         <div className="grid lg:grid-cols-2 gap-12">
           <Card
-            className={`p-8 bg-card/50 backdrop-blur-sm border-primary/10 ${
-              isVisible ? "opacity-100 animate-fade-in-left" : "opacity-0"
-            }`}
+            className={`p-8 bg-card/50 backdrop-blur-sm border-primary/10 ${isVisible ? "opacity-100 animate-fade-in-left" : "opacity-0"
+              }`}
           >
             <h3 className="text-2xl font-display font-semibold mb-6">
               Send a Message
@@ -289,9 +256,8 @@ export function ContactSection() {
           </Card>
 
           <div
-            className={`space-y-8 ${
-              isVisible ? "opacity-100 animate-fade-in-right" : "opacity-0"
-            }`}
+            className={`space-y-8 ${isVisible ? "opacity-100 animate-fade-in-right" : "opacity-0"
+              }`}
           >
             <div>
               <h3 className="text-2xl font-display font-semibold mb-6">

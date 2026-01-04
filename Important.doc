@@ -1,0 +1,12 @@
+Swagger URL: http://localhost:8000/api/schema/swagger-ui/
+
+Back-end run command:
+    cd backend
+    source venv/bin/activate
+    python manage.py runserver
+
+Front-end run command:
+    cd ..
+    npm run dev
+
+Front-end URL: http://127.0.0.1:3000
