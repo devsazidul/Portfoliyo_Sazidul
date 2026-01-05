@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Download, Eye, Search, Filter, FileCode, FileImage, FileSpreadsheet, File, AlertCircle } from "lucide-react";
+import { FileText, Download, Search, Filter, FileCode, FileImage, FileSpreadsheet, File, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Document } from "@shared/schema";
 
 const documentCategories = ["All", "Guide", "Template", "Reference", "Design", "Technical"];
@@ -40,9 +40,8 @@ function DocumentCard({ document, index, isVisible }: DocumentCardProps) {
 
   return (
     <Card
-      className={`group relative overflow-visible bg-card/50 backdrop-blur-sm border-primary/10 transition-all duration-500 ${
-        isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
-      }`}
+      className={`group relative overflow-visible bg-card/50 backdrop-blur-sm border-primary/10 transition-all duration-500 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
+        }`}
       style={{
         animationDelay: `${index * 50}ms`,
         transform: isHovered ? "translateY(-8px)" : "translateY(0)",
@@ -54,11 +53,14 @@ function DocumentCard({ document, index, isVisible }: DocumentCardProps) {
       <div className="p-5">
         <div className="flex items-start gap-4">
           <div
-            className={`flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center transition-transform duration-300 ${
-              isHovered ? "scale-110" : ""
-            }`}
+            className={`flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center transition-transform duration-300 ${isHovered ? "scale-110" : ""
+              } overflow-hidden`}
           >
-            <IconComponent className="w-7 h-7 text-white" />
+            {['JPG', 'JPEG', 'PNG', 'GIF', 'WEBP', 'IMG'].includes(document.type.toUpperCase()) ? (
+              <img src={document.fileUrl} alt={document.title} className="w-full h-full object-cover" />
+            ) : (
+              <IconComponent className="w-7 h-7 text-white" />
+            )}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -91,21 +93,21 @@ function DocumentCard({ document, index, isVisible }: DocumentCardProps) {
                 </span>
               </div>
 
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  data-testid={`button-view-document-${document.id}`}
+              <div className="flex items-center gap-1">
+                <a
+                  href={document.fileUrl}
+                  download={document.title}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Eye className="w-4 h-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  data-testid={`button-download-document-${document.id}`}
-                >
-                  <Download className="w-4 h-4" />
-                </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    data-testid={`button-download-document-${document.id}`}
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
@@ -150,6 +152,7 @@ export function DocumentsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(0); // Pagination State
 
   const { data: documents = [], isLoading, error } = useQuery<Document[]>({
     queryKey: ["/api/documents"],
@@ -172,6 +175,11 @@ export function DocumentsSection() {
     return () => observer.disconnect();
   }, []);
 
+  // Reset page when filter changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [activeCategory, searchQuery]);
+
   const filteredDocuments = documents.filter((doc) => {
     const matchesCategory = activeCategory === "All" || doc.category === activeCategory;
     const matchesSearch =
@@ -180,6 +188,17 @@ export function DocumentsSection() {
       doc.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // Pagination Logic
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(filteredDocuments.length / ITEMS_PER_PAGE);
+  const currentDocs = filteredDocuments.slice(
+    currentPage * ITEMS_PER_PAGE,
+    (currentPage + 1) * ITEMS_PER_PAGE
+  );
+
+  const nextPage = () => setCurrentPage(p => Math.min(totalPages - 1, p + 1));
+  const prevPage = () => setCurrentPage(p => Math.max(0, p - 1));
 
   return (
     <section
@@ -193,29 +212,24 @@ export function DocumentsSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2
-            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${
-              isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
-            }`}
+            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
+              }`}
             data-testid="text-documents-title"
           >
-            {/* Section title text */}
             My <span className="gradient-text-vibrant">Documents</span>
           </h2>
           <p
-            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${
-              isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
-            }`}
+            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
+              }`}
           >
             Browse and download my collection of guides, templates, and resources
           </p>
         </div>
 
         <div
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8 ${
-            isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
-          }`}
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8 ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
+            }`}
         >
-        {/* Search funtinality */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -235,11 +249,10 @@ export function DocumentsSection() {
                 key={category}
                 size="sm"
                 variant={activeCategory === category ? "default" : "ghost"}
-                className={`rounded-full ${
-                  activeCategory === category
-                    ? "bg-gradient-to-r from-primary to-secondary"
-                    : ""
-                }`}
+                className={`rounded-full ${activeCategory === category
+                  ? "bg-gradient-to-r from-primary to-secondary"
+                  : ""
+                  }`}
                 onClick={() => setActiveCategory(category)}
                 data-testid={`button-filter-doc-${category.toLowerCase()}`}
               >
@@ -250,8 +263,8 @@ export function DocumentsSection() {
         </div>
 
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <DocumentSkeleton key={i} />
             ))}
           </div>
@@ -263,24 +276,68 @@ export function DocumentsSection() {
             </p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {filteredDocuments.map((document, index) => (
-              <DocumentCard
-                key={document.id}
-                document={document}
-                index={index}
-                isVisible={isVisible}
-              />
-            ))}
-          </div>
-        )}
+          <div className="relative">
+            {/* Previous Button */}
+            {currentPage > 0 && (
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg border border-primary/10 w-10 h-10 hidden md:flex"
+                onClick={prevPage}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+            )}
 
-        {!isLoading && !error && filteredDocuments.length === 0 && (
-          <div className="text-center py-12">
-            <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              No documents found matching your criteria.
-            </p>
+            {/* Mobile Prev Button */}
+            {currentPage > 0 && (
+              <div className="flex md:hidden justify-center mb-4">
+                <Button variant="outline" onClick={prevPage} className="gap-2">
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </Button>
+              </div>
+            )}
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentDocs.map((document, index) => (
+                <DocumentCard
+                  key={document.id}
+                  document={document}
+                  index={index}
+                  isVisible={isVisible}
+                />
+              ))}
+            </div>
+
+            {/* Next Button */}
+            {currentPage < totalPages - 1 && (
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg border border-primary/10 w-10 h-10 hidden md:flex"
+                onClick={nextPage}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
+            )}
+
+            {/* Mobile Next Button */}
+            {currentPage < totalPages - 1 && (
+              <div className="flex md:hidden justify-center mt-4">
+                <Button variant="outline" onClick={nextPage} className="gap-2">
+                  Next <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+
+            {filteredDocuments.length === 0 && (
+              <div className="text-center py-12 col-span-3">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  No documents found matching your criteria.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
