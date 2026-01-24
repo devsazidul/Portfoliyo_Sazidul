@@ -20,7 +20,7 @@ export default function ProjectManager() {
     const [editingProject, setEditingProject] = useState<Project | null>(null);
 
     const { data: projects, isLoading } = useQuery<Project[]>({
-        queryKey: ["/api/projects"],
+        queryKey: ["/api/projects/"],
     });
 
     const form = useForm<InsertProject>({
@@ -49,7 +49,7 @@ export default function ProjectManager() {
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/projects/"] });
             toast({ title: editingProject ? "Project updated successfully" : "Project created successfully", variant: "success" });
             setIsOpen(false);
             setEditingProject(null);
@@ -75,7 +75,7 @@ export default function ProjectManager() {
             await apiRequest("DELETE", `/api/projects/${id}/`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/projects/"] });
             toast({ title: "Project deleted", variant: "success" });
         },
         onError: () => {

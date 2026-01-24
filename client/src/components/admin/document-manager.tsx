@@ -20,7 +20,7 @@ export default function DocumentManager() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data: documents, isLoading } = useQuery<Document[]>({
-        queryKey: ["/api/documents"],
+        queryKey: ["/api/documents/"],
     });
 
     const form = useForm<InsertDocument>({
@@ -67,7 +67,7 @@ export default function DocumentManager() {
             return res.json();
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/documents/"] });
             toast({ title: "Document uploaded successfully", variant: "success" });
             setIsOpen(false);
             form.reset();
@@ -82,7 +82,7 @@ export default function DocumentManager() {
             await apiRequest("DELETE", `/api/documents/${id}/`);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/documents/"] });
             toast({ title: "Document deleted", variant: "success" });
         },
         onError: () => {
