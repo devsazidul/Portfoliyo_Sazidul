@@ -229,7 +229,7 @@ export function ProjectsSection() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   const { data: projects = [], isLoading, error } = useQuery<Project[]>({
-    queryKey: ["/api/projects"],
+    queryKey: ["/api/projects/"],
   });
 
   useEffect(() => {

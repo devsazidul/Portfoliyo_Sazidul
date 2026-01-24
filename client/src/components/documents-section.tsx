@@ -155,7 +155,7 @@ export function DocumentsSection() {
   const [currentPage, setCurrentPage] = useState(0); // Pagination State
 
   const { data: documents = [], isLoading, error } = useQuery<Document[]>({
-    queryKey: ["/api/documents"],
+    queryKey: ["/api/documents/"],
   });
 
   useEffect(() => {
