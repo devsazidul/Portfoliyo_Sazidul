@@ -12,6 +12,8 @@ export const projects = pgTable("projects", {
   technologies: text("technologies").array().notNull(),
   link: text("link"),
   github: text("github"),
+  apk_file: text("apk_file"),
+  figma_link: text("figma_link"),
 });
 
 export const insertProjectSchema = createInsertSchema(projects).omit({ id: true });

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Pencil, Trash2, ExternalLink, Github } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, ExternalLink, Github, Smartphone, Figma, Download } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function ProjectManager() {
@@ -33,32 +33,45 @@ export default function ProjectManager() {
             technologies: [],
             link: "",
             github: "",
+            apk_file: "",
+            figma_link: "",
         },
     });
 
-    const createMutation = useMutation({
+    const saveMutation = useMutation({
         mutationFn: async (data: InsertProject) => {
-            const res = await apiRequest("POST", "/api/projects/", data);
-            return res.json();
+            if (editingProject) {
+                const res = await apiRequest("PATCH", `/api/projects/${editingProject.id}/`, data);
+                return res.json();
+            } else {
+                const res = await apiRequest("POST", "/api/projects/", data);
+                return res.json();
+            }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
-            toast({ title: "Project created successfully", variant: "success" });
+            toast({ title: editingProject ? "Project updated successfully" : "Project created successfully", variant: "success" });
             setIsOpen(false);
-            form.reset();
+            setEditingProject(null);
+            form.reset({
+                title: "",
+                description: "",
+                category: "",
+                image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
+                technologies: [],
+                link: "",
+                github: "",
+                apk_file: "",
+                figma_link: "",
+            });
         },
         onError: () => {
-            toast({ title: "Failed to create project", variant: "destructive" });
+            toast({ title: editingProject ? "Failed to update project" : "Failed to create project", variant: "destructive" });
         },
     });
 
-    // Note: Update and Delete APIs need to be implemented in Backend first if not already Standard ModelViewSet
-    // Django ViewSets provide them by default, so DELETE /api/projects/{id}/ should work.
-
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            // Warning: Type mismatch potential here. Django IDs are Int, Schema assumes String from UUID.
-            // We seeded Schema with Int-like strings or AutoFields. ModelViewSet uses IDs.
             await apiRequest("DELETE", `/api/projects/${id}/`);
         },
         onSuccess: () => {
@@ -72,10 +85,39 @@ export default function ProjectManager() {
 
 
     const onSubmit = (data: InsertProject) => {
-        // Small trick for array field if using text Area input (comma separated)
-        // For now assume standard input.
-        // Ideally we need a better UI for tags input.
-        createMutation.mutate(data);
+        saveMutation.mutate(data);
+    };
+
+    const handleEdit = (project: Project) => {
+        setEditingProject(project);
+        form.reset({
+            title: project.title,
+            description: project.description,
+            category: project.category,
+            image: project.image,
+            technologies: project.technologies,
+            link: project.link || "",
+            github: project.github || "",
+            apk_file: project.apk_file || "",
+            figma_link: project.figma_link || "",
+        });
+        setIsOpen(true);
+    };
+
+    const handleAdd = () => {
+        setEditingProject(null);
+        form.reset({
+            title: "",
+            description: "",
+            category: "",
+            image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
+            technologies: [],
+            link: "",
+            github: "",
+            apk_file: "",
+            figma_link: "",
+        });
+        setIsOpen(true);
     };
 
     if (isLoading) return <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />;
@@ -84,15 +126,18 @@ export default function ProjectManager() {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold font-display">Projects</h2>
-                <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="gap-2">
-                            <Plus className="w-4 h-4" /> Add Project
-                        </Button>
-                    </DialogTrigger>
+                <Dialog open={isOpen} onOpenChange={(open) => {
+                    setIsOpen(open);
+                    if (!open) {
+                        setEditingProject(null);
+                    }
+                }}>
+                    <Button className="gap-2" onClick={handleAdd}>
+                        <Plus className="w-4 h-4" /> Add Project
+                    </Button>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-primary/20">
                         <DialogHeader>
-                            <DialogTitle>Add New Project</DialogTitle>
+                            <DialogTitle>{editingProject ? "Edit Project" : "Add New Project"}</DialogTitle>
                         </DialogHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -125,6 +170,7 @@ export default function ProjectManager() {
                                     />
                                 </div>
 
+                                {/* Description Field */}
                                 <FormField
                                     control={form.control}
                                     name="description"
@@ -139,9 +185,93 @@ export default function ProjectManager() {
                                     )}
                                 />
 
+                                <FormField
+                                    control={form.control}
+                                    name="image"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Project Image (Upload)</FormLabel>
+                                            <FormControl>
+                                                <div className="flex flex-col gap-2">
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                const reader = new FileReader();
+                                                                reader.onloadend = () => {
+                                                                    field.onChange(reader.result as string);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            }
+                                                        }}
+                                                    />
+                                                    {field.value && field.value.startsWith('data:') && (
+                                                        <img src={field.value} alt="Preview" className="h-20 w-20 object-cover rounded-md border" />
+                                                    )}
+                                                    {field.value && field.value.startsWith('http') && (
+                                                        <img src={field.value} alt="Current" className="h-20 w-20 object-cover rounded-md border" />
+                                                    )}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
                                 {/* Technologies Field - Simplified as text input for now, ideally comma separated */}
                                 {/* Since schema expects array, we might need to parse. But let's check how hook form handles it */}
                                 {/* For now, let's skip complex array UI and just pass empty array or hardcoded */}
+
+
+
+                                {/* Conditional Fields based on Category */}
+                                {form.watch("category")?.toLowerCase().includes("mobile") || form.watch("category")?.toLowerCase().includes("app") ? (
+                                    <FormField
+                                        control={form.control}
+                                        name="apk_file"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>APK File (Upload)</FormLabel>
+                                                <FormControl>
+                                                    <div className="flex items-center gap-2">
+                                                        <Input
+                                                            type="file"
+                                                            accept=".apk"
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    const reader = new FileReader();
+                                                                    reader.onloadend = () => {
+                                                                        field.onChange(reader.result as string);
+                                                                    };
+                                                                    reader.readAsDataURL(file);
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                                {field.value && <p className="text-xs text-muted-foreground truncate">File selected</p>}
+                                            </FormItem>
+                                        )}
+                                    />
+                                ) : null}
+
+                                <FormField
+                                    control={form.control}
+                                    name="figma_link"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Figma Link</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="https://figma.com/..." {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <FormField
@@ -172,8 +302,8 @@ export default function ProjectManager() {
                                     />
                                 </div>
 
-                                <Button type="submit" className="w-full" disabled={createMutation.isPending}>
-                                    {createMutation.isPending ? "Saving..." : "Create Project"}
+                                <Button type="submit" className="w-full" disabled={saveMutation.isPending}>
+                                    {saveMutation.isPending ? "Saving..." : (editingProject ? "Update Project" : "Create Project")}
                                 </Button>
                             </form>
                         </Form>
@@ -208,15 +338,31 @@ export default function ProjectManager() {
                                                 <Github className="w-4 h-4" />
                                             </a>
                                         )}
+                                        {project.apk_file && (
+                                            <a href={project.apk_file} download={`${project.title.toLowerCase().replace(/\s+/g, '-')}.apk`} className="text-green-500 hover:text-green-600">
+                                                <Download className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                        {project.figma_link && (
+                                            <a href={project.figma_link} target="_blank" rel="noreferrer" className="text-pink-500 hover:text-pink-600">
+                                                <Figma className="w-4 h-4" />
+                                            </a>
+                                        )}
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(Number(project.id))}>
-                                        <Trash2 className="w-4 h-4 text-destructive" />
-                                    </Button>
+                                    <div className="flex justify-end gap-2">
+                                        <Button variant="ghost" size="icon" onClick={() => handleEdit(project)}>
+                                            <Pencil className="w-4 h-4 text-primary" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(Number(project.id))}>
+                                            <Trash2 className="w-4 h-4 text-destructive" />
+                                        </Button>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ))}
+
                         {projects?.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">

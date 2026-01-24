@@ -16,6 +16,8 @@ class Project(models.Model):
     technologies = models.JSONField(default=list)  # Using JSONField for array compatibility
     link = models.CharField(max_length=500, blank=True, null=True)
     github = models.CharField(max_length=500, blank=True, null=True)
+    apk_file = models.TextField(blank=True, null=True)
+    figma_link = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Download, Search, Filter, FileCode, FileImage, FileSpreadsheet, File, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, Download, Search, Filter, FileCode, FileImage, FileSpreadsheet, File, AlertCircle } from "lucide-react";
 import type { Document } from "@shared/schema";
 
 const documentCategories = ["All", "Guide", "Template", "Reference", "Design", "Technical"];
@@ -209,7 +209,8 @@ export function DocumentsSection() {
     >
       <div className="absolute inset-0 gradient-bg-hero opacity-20" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+      {/* Centered Container for Title and Controls */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 mb-8">
         <div className="text-center mb-16">
           <h2
             className={`text-4xl md:text-5xl font-display font-bold mb-4 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
@@ -227,7 +228,7 @@ export function DocumentsSection() {
         </div>
 
         <div
-          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8 ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
+          className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
             }`}
         >
           <div className="relative flex-1 max-w-md">
@@ -261,81 +262,66 @@ export function DocumentsSection() {
             ))}
           </div>
         </div>
+      </div>
 
+      {/* Content Area */}
+      <div className="relative z-10">
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <DocumentSkeleton key={i} />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              Failed to load documents. Please try again later.
-            </p>
-          </div>
-        ) : (
-          <div className="relative">
-            {/* Previous Button */}
-            {currentPage > 0 && (
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg border border-primary/10 w-10 h-10 hidden md:flex"
-                onClick={prevPage}
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
-            )}
-
-            {/* Mobile Prev Button */}
-            {currentPage > 0 && (
-              <div className="flex md:hidden justify-center mb-4">
-                <Button variant="outline" onClick={prevPage} className="gap-2">
-                  <ChevronLeft className="w-4 h-4" /> Previous
-                </Button>
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentDocs.map((document, index) => (
-                <DocumentCard
-                  key={document.id}
-                  document={document}
-                  index={index}
-                  isVisible={isVisible}
-                />
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <DocumentSkeleton key={i} />
               ))}
             </div>
-
-            {/* Next Button */}
-            {currentPage < totalPages - 1 && (
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg border border-primary/10 w-10 h-10 hidden md:flex"
-                onClick={nextPage}
-              >
-                <ChevronRight className="w-6 h-6" />
-              </Button>
-            )}
-
-            {/* Mobile Next Button */}
-            {currentPage < totalPages - 1 && (
-              <div className="flex md:hidden justify-center mt-4">
-                <Button variant="outline" onClick={nextPage} className="gap-2">
-                  Next <ChevronRight className="w-4 h-4" />
-                </Button>
+          </div>
+        ) : error ? (
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="text-center py-12">
+              <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                Failed to load documents. Please try again later.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {filteredDocuments.length > 6 ? (
+              <div className="w-full overflow-hidden">
+                <div className="flex w-max animate-marquee gap-6 py-4 px-4 pr-6 hover:[animation-play-state:paused]">
+                  {[...filteredDocuments, ...filteredDocuments].map((document, index) => (
+                    <div key={`${document.id}-${index}`} className="w-[350px] flex-shrink-0">
+                      <DocumentCard
+                        document={document}
+                        index={index}
+                        isVisible={isVisible}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredDocuments.map((document, index) => (
+                    <DocumentCard
+                      key={document.id}
+                      document={document}
+                      index={index}
+                      isVisible={isVisible}
+                    />
+                  ))}
+                </div>
               </div>
             )}
 
             {filteredDocuments.length === 0 && (
-              <div className="text-center py-12 col-span-3">
-                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  No documents found matching your criteria.
-                </p>
+              <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="text-center py-12">
+                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    No documents found matching your criteria.
+                  </p>
+                </div>
               </div>
             )}
           </div>

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ExternalLink, Github, Filter, AlertCircle } from "lucide-react";
+import { ExternalLink, Github, Filter, AlertCircle, Smartphone, Figma, Download } from "lucide-react";
 import type { Project } from "@shared/schema";
 
 const categories = ["All", "Web", "Mobile", "AI", "Design", "Finance"];
@@ -46,9 +46,8 @@ function ProjectCard({ project, index, isVisible }: ProjectCardProps) {
   return (
     <Card
       ref={cardRef}
-      className={`group relative overflow-visible bg-card/50 backdrop-blur-sm border-primary/10 transition-all duration-500 ${
-        isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
-      }`}
+      className={`group relative overflow-visible bg-card/50 backdrop-blur-sm border-primary/10 transition-all duration-500 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
+        }`}
       style={{
         animationDelay: `${index * 100}ms`,
         transform: isHovered
@@ -68,9 +67,13 @@ function ProjectCard({ project, index, isVisible }: ProjectCardProps) {
         <div
           className={`w-full h-40 mb-4 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}
         >
-          <div className="text-white/80 font-display text-3xl font-bold">
-            {project.title.charAt(0)}
-          </div>
+          {project.image && (project.image.startsWith("http") || project.image.startsWith("data:")) ? (
+            <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          ) : (
+            <div className="text-white/80 font-display text-3xl font-bold">
+              {project.title.charAt(0)}
+            </div>
+          )}
         </div>
 
         <Badge
@@ -147,6 +150,41 @@ function ProjectCard({ project, index, isVisible }: ProjectCardProps) {
               >
                 <Github className="w-4 h-4" />
                 Code
+              </a>
+            </Button>
+          )}
+          {project.apk_file && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="gap-1.5 bg-green-500/10 text-green-500 hover:bg-green-500/20 hover:text-green-600 border-green-500/20 font-medium"
+              asChild
+            >
+              <a
+                href={project.apk_file}
+                download={`${project.title.replace(/\s+/g, '-').toLowerCase()}.apk`}
+                data-testid={`link-project-apk-${project.id}`}
+              >
+                <Download className="w-4 h-4" />
+                Download APK
+              </a>
+            </Button>
+          )}
+          {project.figma_link && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="gap-1.5"
+              asChild
+            >
+              <a
+                href={project.figma_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid={`link-project-figma-${project.id}`}
+              >
+                <Figma className="w-4 h-4" />
+                Figma
               </a>
             </Button>
           )}
@@ -228,26 +266,23 @@ export function ProjectsSection() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2
-            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${
-              isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
-            }`}
+            className={`text-4xl md:text-5xl font-display font-bold mb-4 ${isVisible ? "opacity-100 animate-fade-in-up" : "opacity-0"
+              }`}
             data-testid="text-projects-title"
           >
             Featured <span className="gradient-text-vibrant">Projects</span>
           </h2>
           <p
-            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${
-              isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
-            }`}
+            className={`text-lg text-muted-foreground max-w-2xl mx-auto ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-100" : "opacity-0"
+              }`}
           >
             Explore my latest work across different domains
           </p>
         </div>
 
         <div
-          className={`flex flex-wrap items-center justify-center gap-2 mb-12 ${
-            isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
-          }`}
+          className={`flex flex-wrap items-center justify-center gap-2 mb-12 ${isVisible ? "opacity-100 animate-fade-in-up animation-delay-200" : "opacity-0"
+            }`}
         >
           <Filter className="w-4 h-4 text-muted-foreground mr-2" />
           {categories.map((category) => (
@@ -255,11 +290,10 @@ export function ProjectsSection() {
               key={category}
               size="sm"
               variant={activeCategory === category ? "default" : "ghost"}
-              className={`rounded-full ${
-                activeCategory === category
-                  ? "bg-gradient-to-r from-primary to-secondary"
-                  : ""
-              }`}
+              className={`rounded-full ${activeCategory === category
+                ? "bg-gradient-to-r from-primary to-secondary"
+                : ""
+                }`}
               onClick={() => setActiveCategory(category)}
               data-testid={`button-filter-${category.toLowerCase()}`}
             >

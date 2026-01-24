@@ -136,9 +136,9 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
-# Increase max request body size to 10MB for Base64 image uploads
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
+# Increase max request body size to 500MB for Base64 image uploads and APKs
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500 MB
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Vibrant Showcase API',
