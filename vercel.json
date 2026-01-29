@@ -5,7 +5,7 @@
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "https://portfoliyo-sazidul-backend.vercel.app/api/$1"
+            "destination": "https://portfoliyo-sazidul-backend-r33n.vercel.app/api/$1"
         },
         {
             "source": "/(.*)",
