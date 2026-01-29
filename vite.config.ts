@@ -34,7 +34,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://portfoliyo-sazidul-backend.vercel.app',
+        target: 'https://portfoliyo-sazidul-backend-r33n.vercel.app',
         changeOrigin: true,
       }
     },
